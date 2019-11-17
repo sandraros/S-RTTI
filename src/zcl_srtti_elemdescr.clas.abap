@@ -17,12 +17,12 @@ CLASS zcl_srtti_elemdescr DEFINITION
     METHODS get_rtti
         REDEFINITION .
   PROTECTED SECTION.
-  PRIVATE SECTION.
     METHODS get_rtti_by_type_kind
       IMPORTING
         i_type_kind LIKE cl_abap_typedescr=>type_kind
       RETURNING
         VALUE(rtti) TYPE REF TO cl_abap_typedescr.
+  PRIVATE SECTION.
 ENDCLASS.
 
 
@@ -50,14 +50,17 @@ CLASS zcl_srtti_elemdescr IMPLEMENTATION.
 
   METHOD get_rtti.
 
+    rtti = super->get_rtti( ).
+    CHECK rtti IS NOT BOUND.
+
     IF is_ddic_type = abap_true
           AND technical_type = abap_false.
       " If XML transformations are used, they may be based on
       " the data element, for instance XSDBOOLEAN will convert "true"
       " into "X" during deserialization.
       rtti = cl_abap_typedescr=>describe_by_name( absolute_name ).
-    ELSEIF type_kind = cl_abap_typedescr=>typekind_enum.
-      rtti = get_rtti_by_type_kind( CAST zcl_srtti_enumdescr( me )->base_type_kind ).
+*    ELSEIF type_kind = cl_abap_typedescr=>typekind_enum.
+*      rtti = get_rtti_by_type_kind( CAST zcl_srtti_enumdescr( me )->base_type_kind ).
     ELSE.
       rtti = get_rtti_by_type_kind( type_kind ).
     ENDIF.

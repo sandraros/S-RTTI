@@ -7,6 +7,7 @@ class ltc_main definition
 
   private section.
     methods test for testing.
+    methods test2 for testing.
     DATA dref type ref to data.
 
 endclass.
@@ -22,6 +23,12 @@ class ltc_main implementation.
 * output_length.
     cl_abap_unit_assert=>assert_equals( msg = 'Type kind' exp = rtti->type_kind act = srtti->type_kind ).
     cl_abap_unit_assert=>assert_equals( msg = 'Kind' exp = rtti->kind act = srtti->kind ).
+  endmethod.
+
+  method test2.
+    DATA variable type c lENGTH 20.
+    variable = 'Hello World'.
+zcl_srtti_aunit=>serialize_deserialize( variable ).
   endmethod.
 
 endclass.

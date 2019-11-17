@@ -99,28 +99,15 @@ CLASS ltc_main IMPLEMENTATION.
 * decimals
 * kind
 * is_ddic_type
-    cl_abap_unit_assert=>assert_equals( msg = 'absolute_name' exp = rtti->absolute_name act = srtti->absolute_name ).
-    cl_abap_unit_assert=>assert_equals( msg = 'Type kind' exp = rtti->type_kind act = srtti->type_kind ).
-    cl_abap_unit_assert=>assert_equals( msg = 'length' exp = rtti->length act = srtti->length ).
-    cl_abap_unit_assert=>assert_equals( msg = 'decimals' exp = rtti->decimals act = srtti->decimals ).
-    cl_abap_unit_assert=>assert_equals( msg = 'Kind' exp = rtti->kind act = srtti->kind ).
-    cl_abap_unit_assert=>assert_equals( msg = 'is_ddic_type' exp = rtti->is_ddic_type( ) act = srtti->is_ddic_type ).
-
-    DATA variable TYPE c LENGTH 20.
-    variable = 'Hello world'.
-    DATA(srtti2) = zcl_srtti_typedescr=>create_by_rtti( CAST #( cl_abap_typedescr=>describe_by_data( variable ) ) ).
-    CALL TRANSFORMATION id SOURCE srtti = srtti2 dobj = variable RESULT XML DATA(xstring).
-
-    CLEAR variable.
-
-    DATA srtti3 TYPE REF TO zcl_srtti_typedescr.
-    CALL TRANSFORMATION id SOURCE XML xstring RESULT srtti = srtti3."OPTIONS DATA_REFS = 'heap-or-create'.
-    DATA(rtti3) = CAST cl_abap_datadescr( srtti3->get_rtti( ) ).
-    DATA ref_variable TYPE REF TO data.
-    CREATE DATA ref_variable TYPE HANDLE rtti3.
-    ASSIGN ref_variable->* TO FIELD-SYMBOL(<variable>).
-    CALL TRANSFORMATION id SOURCE XML xstring RESULT dobj = <variable>.
-    cl_abap_unit_assert=>assert_equals( exp = 'Hello world' act = <variable> ).
+*    cl_abap_unit_assert=>assert_equals( msg = 'absolute_name' exp = rtti->absolute_name act = srtti->absolute_name ).
+*    cl_abap_unit_assert=>assert_equals( msg = 'Type kind' exp = rtti->type_kind act = srtti->type_kind ).
+*    cl_abap_unit_assert=>assert_equals( msg = 'length' exp = rtti->length act = srtti->length ).
+*    cl_abap_unit_assert=>assert_equals( msg = 'decimals' exp = rtti->decimals act = srtti->decimals ).
+*    cl_abap_unit_assert=>assert_equals( msg = 'Kind' exp = rtti->kind act = srtti->kind ).
+*    cl_abap_unit_assert=>assert_equals( msg = 'is_ddic_type' exp = rtti->is_ddic_type( ) act = srtti->is_ddic_type ).
+*
+*    DATA variable TYPE c LENGTH 20.
+*    variable = 'Hello world'.
 
   ENDMETHOD.
 

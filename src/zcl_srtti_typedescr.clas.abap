@@ -72,7 +72,11 @@ CLASS zcl_srtti_typedescr IMPLEMENTATION.
 
     CASE rtti->kind.
       WHEN cl_abap_typedescr=>kind_elem.
-        srtti = NEW zcl_srtti_elemdescr( CAST #( rtti ) ).
+        IF rtti->type_kind = cl_abap_typedescr=>typekind_enum.
+          srtti = NEW zcl_srtti_enumdescr( CAST #( rtti ) ).
+        ELSE.
+          srtti = NEW zcl_srtti_elemdescr( CAST #( rtti ) ).
+        ENDIF.
       WHEN cl_abap_typedescr=>kind_struct.
         srtti = NEW zcl_srtti_structdescr( CAST #( rtti ) ).
       WHEN cl_abap_typedescr=>kind_table.
