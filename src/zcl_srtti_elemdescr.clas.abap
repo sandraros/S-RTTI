@@ -59,8 +59,6 @@ CLASS zcl_srtti_elemdescr IMPLEMENTATION.
       " the data element, for instance XSDBOOLEAN will convert "true"
       " into "X" during deserialization.
       rtti = cl_abap_typedescr=>describe_by_name( absolute_name ).
-*    ELSEIF type_kind = cl_abap_typedescr=>typekind_enum.
-*      rtti = get_rtti_by_type_kind( CAST zcl_srtti_enumdescr( me )->base_type_kind ).
     ELSE.
       rtti = get_rtti_by_type_kind( type_kind ).
     ENDIF.

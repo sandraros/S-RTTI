@@ -16,15 +16,13 @@ CLASS zcl_srtti_structdescr DEFINITION
     TYPES:
       sabap_component_tab TYPE STANDARD TABLE OF sabap_componentdescr .
 
-    DATA struct_kind LIKE cl_abap_structdescr=>struct_kind .
-    DATA components TYPE zcl_srtti_structdescr=>sabap_component_tab .
-*    DATA components LIKE cl_abap_structdescr=>components .
-    DATA has_include LIKE cl_abap_structdescr=>has_include .
-*    DATA loc_components TYPE abap_component_tab .
+    DATA struct_kind LIKE cl_abap_structdescr=>struct_kind READ-ONLY.
+    DATA components  TYPE sabap_component_tab READ-ONLY.
+    DATA has_include LIKE cl_abap_structdescr=>has_include READ-ONLY.
 
     METHODS constructor
       IMPORTING
-        !rtti        TYPE REF TO cl_abap_structdescr.
+        !rtti TYPE REF TO cl_abap_structdescr.
     METHODS get_rtti
         REDEFINITION .
   PROTECTED SECTION.
@@ -33,14 +31,14 @@ ENDCLASS.
 
 
 
-CLASS ZCL_SRTTI_STRUCTDESCR IMPLEMENTATION.
+CLASS zcl_srtti_structdescr IMPLEMENTATION.
 
 
   METHOD constructor.
 
-    SUPER->constructor( rtti ).
+    super->constructor( rtti ).
+
     struct_kind = rtti->struct_kind.
-*    components  = rtti->components.
     has_include = rtti->has_include.
 
     LOOP AT rtti->get_components( ) ASSIGNING FIELD-SYMBOL(<component>).
@@ -60,17 +58,18 @@ CLASS ZCL_SRTTI_STRUCTDESCR IMPLEMENTATION.
 
   METHOD get_rtti.
 
-    data(lt_component) = value cl_abap_structdescr=>component_table( ).
+    DATA(lt_component) = VALUE cl_abap_structdescr=>component_table( ).
     LOOP AT components ASSIGNING FIELD-SYMBOL(<component>).
-      data(ls_component) = value abap_componentdescr(
+      DATA(ls_component) = VALUE abap_componentdescr(
       name       = <component>-name
-      type       = CAST #( <component>-type->GET_rtti( ) )
+      type       = CAST #( <component>-type->get_rtti( ) )
       as_include = <component>-as_include
       suffix     = <component>-suffix ).
       APPEND ls_component TO lt_component.
     ENDLOOP.
     rtti = cl_abap_structdescr=>create( lt_component ).
 
-
   ENDMETHOD.
+
+
 ENDCLASS.
