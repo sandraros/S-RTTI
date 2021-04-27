@@ -39,12 +39,16 @@ CLASS zcl_srtti_tabledescr IMPLEMENTATION.
       WHEN OTHERS.
         ASSIGN empty_key TO <lt_key>.
     ENDCASE.
-    rtti = cl_abap_tabledescr=>create(
-        p_line_type   = CAST #( line_type->get_rtti( ) )
-        p_table_kind  = table_kind
-        p_unique      = has_unique_key
-        p_key         = <lt_key>
-        p_key_kind    = key_defkind ).
+    TRY.
+        rtti = cl_abap_tabledescr=>create(
+            p_line_type   = CAST #( line_type->get_rtti( ) )
+            p_table_kind  = table_kind
+            p_unique      = has_unique_key
+            p_key         = <lt_key>
+            p_key_kind    = key_defkind ).
+      CATCH cx_sy_table_creation INTO DATA(error).
+        RAISE EXCEPTION TYPE zcx_srtti EXPORTING previous = error.
+    ENDTRY.
 
   ENDMETHOD.
 
@@ -56,7 +60,7 @@ CLASS zcl_srtti_tabledescr IMPLEMENTATION.
     key_defkind     = rtti->key_defkind.
     has_unique_key  = rtti->has_unique_key.
     table_kind      = rtti->table_kind.
-    line_type       = NEW zcl_srtti_datadescr( rtti->get_table_line_type( ) ).
+    line_type       = CAST #( zcl_srtti_typedescr=>create_by_rtti( rtti->get_table_line_type( ) ) ).
     IF line_type->not_serializable = abap_true.
       not_serializable = abap_true.
     ENDIF.
