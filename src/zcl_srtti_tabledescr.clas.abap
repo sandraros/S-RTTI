@@ -1,30 +1,47 @@
 "! <p class="shorttext synchronized" lang="en">Serializable RTTI table</p>
-CLASS zcl_srtti_tabledescr DEFINITION
-  PUBLIC
-  INHERITING FROM zcl_srtti_complexdescr
-  CREATE PUBLIC .
+class ZCL_SRTTI_TABLEDESCR definition
+  public
+  inheriting from ZCL_SRTTI_COMPLEXDESCR
+  create public .
 
-  PUBLIC SECTION.
+public section.
 
-    DATA key LIKE cl_abap_tabledescr=>key .
-    DATA initial_size LIKE cl_abap_tabledescr=>initial_size .
-    DATA key_defkind LIKE cl_abap_tabledescr=>key_defkind .
-    DATA has_unique_key LIKE cl_abap_tabledescr=>has_unique_key .
-    DATA table_kind LIKE cl_abap_tabledescr=>table_kind .
-    DATA line_type TYPE REF TO zcl_srtti_datadescr .
+  data KEY like CL_ABAP_TABLEDESCR=>KEY .
+  data INITIAL_SIZE like CL_ABAP_TABLEDESCR=>INITIAL_SIZE .
+  data KEY_DEFKIND like CL_ABAP_TABLEDESCR=>KEY_DEFKIND .
+  data HAS_UNIQUE_KEY like CL_ABAP_TABLEDESCR=>HAS_UNIQUE_KEY .
+  data TABLE_KIND like CL_ABAP_TABLEDESCR=>TABLE_KIND .
+  data LINE_TYPE type ref to ZCL_SRTTI_DATADESCR .
 
-    METHODS constructor
-      IMPORTING
-        !rtti        TYPE REF TO cl_abap_tabledescr.
-    METHODS get_rtti
-        REDEFINITION .
+  methods CONSTRUCTOR
+    importing
+      !RTTI type ref to CL_ABAP_TABLEDESCR .
+
+  methods GET_RTTI
+    redefinition .
   PROTECTED SECTION.
   PRIVATE SECTION.
 ENDCLASS.
 
 
 
-CLASS zcl_srtti_tabledescr IMPLEMENTATION.
+CLASS ZCL_SRTTI_TABLEDESCR IMPLEMENTATION.
+
+
+  METHOD constructor.
+
+    SUPER->constructor( rtti ).
+    key             = rtti->key.
+    initial_size    = rtti->initial_size.
+    key_defkind     = rtti->key_defkind.
+    has_unique_key  = rtti->has_unique_key.
+    table_kind      = rtti->table_kind.
+    line_type       = cast #( zcl_srtti_typedescr=>create_by_rtti( rtti->get_table_line_type( ) ) ).
+    IF line_type->not_serializable = abap_true.
+      not_serializable = abap_true.
+    ENDIF.
+
+  ENDMETHOD.
 
 
   METHOD get_rtti.
@@ -39,28 +56,16 @@ CLASS zcl_srtti_tabledescr IMPLEMENTATION.
       WHEN OTHERS.
         ASSIGN empty_key TO <lt_key>.
     ENDCASE.
-    rtti = cl_abap_tabledescr=>create(
-        p_line_type   = CAST #( line_type->get_rtti( ) )
-        p_table_kind  = table_kind
-        p_unique      = has_unique_key
-        p_key         = <lt_key>
-        p_key_kind    = key_defkind ).
+    TRY.
+        rtti = cl_abap_tabledescr=>create(
+            p_line_type   = CAST #( line_type->get_rtti( ) )
+            p_table_kind  = table_kind
+            p_unique      = has_unique_key
+            p_key         = <lt_key>
+            p_key_kind    = key_defkind ).
+      CATCH cx_sy_table_creation INTO DATA(error).
+        RAISE EXCEPTION TYPE zcx_srtti EXPORTING previous = error.
+    ENDTRY.
 
   ENDMETHOD.
-
-  METHOD constructor.
-
-    SUPER->constructor( rtti ).
-    key             = rtti->key.
-    initial_size    = rtti->initial_size.
-    key_defkind     = rtti->key_defkind.
-    has_unique_key  = rtti->has_unique_key.
-    table_kind      = rtti->table_kind.
-    line_type       = NEW zcl_srtti_datadescr( rtti->get_table_line_type( ) ).
-    IF line_type->not_serializable = abap_true.
-      not_serializable = abap_true.
-    ENDIF.
-
-  ENDMETHOD.
-
 ENDCLASS.
