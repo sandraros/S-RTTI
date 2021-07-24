@@ -44,7 +44,7 @@ CLASS zcl_srtti_structdescr IMPLEMENTATION.
     LOOP AT rtti->get_components( ) ASSIGNING FIELD-SYMBOL(<component>).
       DATA(scomponent) = VALUE sabap_componentdescr(
           name       = <component>-name
-          type       = NEW zcl_srtti_datadescr( <component>-type )
+          type       = CAST #( zcl_srtti_datadescr=>create_by_rtti( <component>-type ) )
           as_include = <component>-as_include
           suffix     = <component>-suffix ).
       APPEND scomponent TO components.
