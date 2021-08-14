@@ -14,7 +14,7 @@ Principle to deserialize:
 If a type description object has some of its parts based on ABAP Dictionary objects, its deserialization can only work (well) if these objects have not been changed since they were serialized.
 
 Demo program:
-```
+```abap
 " Serialization of both type and value
 DATA variable TYPE c LENGTH 20.
 variable = 'Hello world'.
