@@ -39,7 +39,7 @@ If a type description object has some of its parts based on ABAP Dictionary obje
 
 Demo program:
 ```abap
-TYPES 
+REPORT zdemo.
 " Serialization of both type and value
 DATA variable TYPE c LENGTH 20.
 variable = 'Hello world'.
@@ -54,7 +54,7 @@ CALL TRANSFORMATION ID SOURCE srtti = srtti
 DATA: srtti2       TYPE REF TO zcl_srtti_typedescr,
       ref_variable TYPE REF TO DATA.
 CALL TRANSFORMATION ID SOURCE XML xstring RESULT srtti = srtti2.
-DATA(rtti) = srtti2->get_rtti( ).
+DATA(rtti) = CAST cl_abap_datadescr( srtti2->get_rtti( ) ).
 
 " Deserialization of value
 CREATE DATA ref_variable TYPE HANDLE rtti.
