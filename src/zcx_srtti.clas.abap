@@ -6,7 +6,6 @@ CLASS zcx_srtti DEFINITION
 
   PUBLIC SECTION.
 
-    INTERFACES if_t100_dyn_msg .
     INTERFACES if_t100_message .
 
     METHODS constructor
