@@ -34,7 +34,7 @@ CLASS ZCL_SRTTI_OBJECTDESCR IMPLEMENTATION.
     attributes  = rtti->attributes.
     methods     = rtti->methods.
     events      = rtti->events.
-    
+
     READ TABLE interfaces WITH KEY name = 'IF_SERIALIZABLE_OBJECT' TRANSPORTING NO FIELDS.
     temp1 = sy-subrc.
     IF NOT temp1 = 0.

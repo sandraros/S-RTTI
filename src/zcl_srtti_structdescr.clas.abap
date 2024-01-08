@@ -46,19 +46,19 @@ CLASS zcl_srtti_structdescr IMPLEMENTATION.
     struct_kind = rtti->struct_kind.
     has_include = rtti->has_include.
 
-    
+
     temp1 = rtti->get_components( ).
-    
+
     LOOP AT temp1 ASSIGNING <component>.
-      
+
       CLEAR temp2.
       temp2-name = <component>-name.
-      
+
       temp3 ?= zcl_srtti_datadescr=>create_by_rtti( <component>-type ).
       temp2-type = temp3.
       temp2-as_include = <component>-as_include.
       temp2-suffix = <component>-suffix.
-      
+
       scomponent = temp2.
       APPEND scomponent TO components.
       IF scomponent-type->not_serializable = abap_true.
@@ -78,19 +78,19 @@ CLASS zcl_srtti_structdescr IMPLEMENTATION.
       DATA temp5 TYPE REF TO cl_abap_datadescr.
       DATA ls_component LIKE temp4.
     CLEAR temp3.
-    
+
     lt_component = temp3.
-    
+
     LOOP AT components ASSIGNING <component>.
-      
+
       CLEAR temp4.
       temp4-name = <component>-name.
-      
+
       temp5 ?= <component>-type->get_rtti( ).
       temp4-type = temp5.
       temp4-as_include = <component>-as_include.
       temp4-suffix = <component>-suffix.
-      
+
       ls_component = temp4.
       APPEND ls_component TO lt_component.
     ENDLOOP.

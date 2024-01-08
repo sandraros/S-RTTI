@@ -41,11 +41,11 @@ CLASS ZCL_SRTTI_ENUMDESCR IMPLEMENTATION.
     rtti = super->get_rtti( ).
     CHECK rtti IS NOT BOUND.
 
-    
+
     rtti_elem = get_rtti_by_type_kind( base_type_kind ).
 *    DATA(rtti_elem) = super->get_rtti( ).
 
-    
+
     temp1 ?= rtti_elem.
     rtti = cl_abap_enumdescr=>get(
         p_base_type = temp1

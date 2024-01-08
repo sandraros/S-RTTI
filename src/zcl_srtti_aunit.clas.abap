@@ -26,11 +26,11 @@ CLASS zcl_srtti_aunit IMPLEMENTATION.
     DATA ref_variable2 TYPE REF TO data.
     FIELD-SYMBOLS <variable2> TYPE any.
     ASSIGN variable TO <variable1>.
-    
+
     rtti1 = cl_abap_typedescr=>describe_by_data( <variable1> ).
-    
+
     srtti1 = zcl_srtti_typedescr=>create_by_data_object( <variable1> ).
-    
+
     CALL TRANSFORMATION id
         SOURCE  srtti = srtti1
                 dobj  = <variable1>
@@ -38,17 +38,17 @@ CLASS zcl_srtti_aunit IMPLEMENTATION.
         OPTIONS data_refs = 'heap-or-create'.
 
     " Deserialize: (1) the type, to create the variable (2) then the value.
-    
+
     CALL TRANSFORMATION id
         SOURCE XML xstring
         RESULT srtti = srtti2.
-    
+
     temp1 ?= srtti2->get_rtti( ).
-    
+
     rtti2 = temp1.
-    
+
     CREATE DATA ref_variable2 TYPE HANDLE rtti2.
-    
+
     ASSIGN ref_variable2->* TO <variable2>.
     CALL TRANSFORMATION id
         SOURCE XML xstring
