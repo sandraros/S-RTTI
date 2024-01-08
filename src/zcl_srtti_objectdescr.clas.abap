@@ -26,6 +26,7 @@ CLASS ZCL_SRTTI_OBJECTDESCR IMPLEMENTATION.
 
 
   METHOD constructor.
+    DATA temp1 LIKE sy-subrc.
 
     super->constructor( rtti ).
     interfaces  = rtti->interfaces.
@@ -33,7 +34,10 @@ CLASS ZCL_SRTTI_OBJECTDESCR IMPLEMENTATION.
     attributes  = rtti->attributes.
     methods     = rtti->methods.
     events      = rtti->events.
-    IF NOT line_exists( interfaces[ name = 'IF_SERIALIZABLE_OBJECT' ] ).
+    
+    READ TABLE interfaces WITH KEY name = 'IF_SERIALIZABLE_OBJECT' TRANSPORTING NO FIELDS.
+    temp1 = sy-subrc.
+    IF NOT temp1 = 0.
       not_serializable = abap_true.
     ENDIF.
 

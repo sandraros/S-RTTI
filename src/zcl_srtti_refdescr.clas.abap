@@ -25,7 +25,7 @@ CLASS ZCL_SRTTI_REFDESCR IMPLEMENTATION.
   METHOD constructor.
 
     super->constructor( rtti ).
-    referenced_type = NEW zcl_srtti_typedescr( rtti->get_referenced_type( ) ).
+    CREATE OBJECT referenced_type TYPE zcl_srtti_typedescr EXPORTING RTTI = rtti->get_referenced_type( ).
     IF referenced_type->not_serializable = abap_true.
       not_serializable = abap_true.
     ENDIF.

@@ -69,24 +69,45 @@ CLASS zcl_srtti_typedescr IMPLEMENTATION.
 
 
   METHOD create_by_rtti.
+          DATA temp1 TYPE REF TO cl_abap_enumdescr.
+          DATA temp2 TYPE REF TO cl_abap_elemdescr.
+        DATA temp3 TYPE REF TO cl_abap_structdescr.
+        DATA temp4 TYPE REF TO cl_abap_tabledescr.
+        DATA temp5 TYPE REF TO cl_abap_refdescr.
+        DATA temp6 TYPE REF TO cl_abap_classdescr.
+        DATA temp7 TYPE REF TO cl_abap_intfdescr.
 
     CASE rtti->kind.
       WHEN cl_abap_typedescr=>kind_elem.
         IF rtti->type_kind = cl_abap_typedescr=>typekind_enum.
-          srtti = NEW zcl_srtti_enumdescr( CAST #( rtti ) ).
+          
+          temp1 ?= rtti.
+          CREATE OBJECT srtti TYPE zcl_srtti_enumdescr EXPORTING RTTI = temp1.
         ELSE.
-          srtti = NEW zcl_srtti_elemdescr( CAST #( rtti ) ).
+          
+          temp2 ?= rtti.
+          CREATE OBJECT srtti TYPE zcl_srtti_elemdescr EXPORTING RTTI = temp2.
         ENDIF.
       WHEN cl_abap_typedescr=>kind_struct.
-        srtti = NEW zcl_srtti_structdescr( CAST #( rtti ) ).
+        
+        temp3 ?= rtti.
+        CREATE OBJECT srtti TYPE zcl_srtti_structdescr EXPORTING RTTI = temp3.
       WHEN cl_abap_typedescr=>kind_table.
-        srtti = NEW zcl_srtti_tabledescr( CAST #( rtti ) ).
+        
+        temp4 ?= rtti.
+        CREATE OBJECT srtti TYPE zcl_srtti_tabledescr EXPORTING RTTI = temp4.
       WHEN cl_abap_typedescr=>kind_ref.
-        srtti = NEW zcl_srtti_refdescr( CAST #( rtti ) ).
+        
+        temp5 ?= rtti.
+        CREATE OBJECT srtti TYPE zcl_srtti_refdescr EXPORTING RTTI = temp5.
       WHEN cl_abap_typedescr=>kind_class.
-        srtti = NEW zcl_srtti_classdescr( CAST #( rtti ) ).
+        
+        temp6 ?= rtti.
+        CREATE OBJECT srtti TYPE zcl_srtti_classdescr EXPORTING RTTI = temp6.
       WHEN cl_abap_typedescr=>kind_intf.
-        srtti = NEW zcl_srtti_intfdescr( CAST #( rtti ) ).
+        
+        temp7 ?= rtti.
+        CREATE OBJECT srtti TYPE zcl_srtti_intfdescr EXPORTING RTTI = temp7.
       WHEN OTHERS.
         " Unsupported (new ABAP features in the future)
         RAISE EXCEPTION TYPE zcx_srtti.

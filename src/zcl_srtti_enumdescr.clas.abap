@@ -35,15 +35,20 @@ CLASS ZCL_SRTTI_ENUMDESCR IMPLEMENTATION.
 
 
   METHOD get_rtti.
+    DATA rtti_elem TYPE REF TO cl_abap_typedescr.
+    DATA temp1 TYPE REF TO cl_abap_elemdescr.
 
     rtti = super->get_rtti( ).
     CHECK rtti IS NOT BOUND.
 
-    DATA(rtti_elem) = get_rtti_by_type_kind( base_type_kind ).
+    
+    rtti_elem = get_rtti_by_type_kind( base_type_kind ).
 *    DATA(rtti_elem) = super->get_rtti( ).
 
+    
+    temp1 ?= rtti_elem.
     rtti = cl_abap_enumdescr=>get(
-        p_base_type = CAST #( rtti_elem )
+        p_base_type = temp1
         p_members   = members ).
 
   ENDMETHOD.
