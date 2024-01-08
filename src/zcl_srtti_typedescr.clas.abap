@@ -79,15 +79,9 @@ CLASS zcl_srtti_typedescr IMPLEMENTATION.
 
     CASE rtti->kind.
       WHEN cl_abap_typedescr=>kind_elem.
-        IF rtti->type_kind = cl_abap_typedescr=>typekind_enum.
-
-          temp1 ?= rtti.
-          CREATE OBJECT srtti TYPE zcl_srtti_enumdescr EXPORTING RTTI = temp1.
-        ELSE.
-
           temp2 ?= rtti.
           CREATE OBJECT srtti TYPE zcl_srtti_elemdescr EXPORTING RTTI = temp2.
-        ENDIF.
+
       WHEN cl_abap_typedescr=>kind_struct.
 
         temp3 ?= rtti.
