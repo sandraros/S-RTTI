@@ -69,39 +69,39 @@ CLASS zcl_srtti_typedescr IMPLEMENTATION.
 
 
   METHOD create_by_rtti.
-          DATA temp1 TYPE REF TO cl_abap_enumdescr.
-          DATA temp2 TYPE REF TO cl_abap_elemdescr.
-        DATA temp3 TYPE REF TO cl_abap_structdescr.
-        DATA temp4 TYPE REF TO cl_abap_tabledescr.
-        DATA temp5 TYPE REF TO cl_abap_refdescr.
-        DATA temp6 TYPE REF TO cl_abap_classdescr.
-        DATA temp7 TYPE REF TO cl_abap_intfdescr.
+
+    DATA temp2 TYPE REF TO cl_abap_elemdescr.
+    DATA temp3 TYPE REF TO cl_abap_structdescr.
+    DATA temp4 TYPE REF TO cl_abap_tabledescr.
+    DATA temp5 TYPE REF TO cl_abap_refdescr.
+    DATA temp6 TYPE REF TO cl_abap_classdescr.
+    DATA temp7 TYPE REF TO cl_abap_intfdescr.
 
     CASE rtti->kind.
       WHEN cl_abap_typedescr=>kind_elem.
-          temp2 ?= rtti.
-          CREATE OBJECT srtti TYPE zcl_srtti_elemdescr EXPORTING RTTI = temp2.
+        temp2 ?= rtti.
+        CREATE OBJECT srtti TYPE zcl_srtti_elemdescr EXPORTING rtti = temp2.
 
       WHEN cl_abap_typedescr=>kind_struct.
 
         temp3 ?= rtti.
-        CREATE OBJECT srtti TYPE zcl_srtti_structdescr EXPORTING RTTI = temp3.
+        CREATE OBJECT srtti TYPE zcl_srtti_structdescr EXPORTING rtti = temp3.
       WHEN cl_abap_typedescr=>kind_table.
 
         temp4 ?= rtti.
-        CREATE OBJECT srtti TYPE zcl_srtti_tabledescr EXPORTING RTTI = temp4.
+        CREATE OBJECT srtti TYPE zcl_srtti_tabledescr EXPORTING rtti = temp4.
       WHEN cl_abap_typedescr=>kind_ref.
 
         temp5 ?= rtti.
-        CREATE OBJECT srtti TYPE zcl_srtti_refdescr EXPORTING RTTI = temp5.
+        CREATE OBJECT srtti TYPE zcl_srtti_refdescr EXPORTING rtti = temp5.
       WHEN cl_abap_typedescr=>kind_class.
 
         temp6 ?= rtti.
-        CREATE OBJECT srtti TYPE zcl_srtti_classdescr EXPORTING RTTI = temp6.
+        CREATE OBJECT srtti TYPE zcl_srtti_classdescr EXPORTING rtti = temp6.
       WHEN cl_abap_typedescr=>kind_intf.
 
         temp7 ?= rtti.
-        CREATE OBJECT srtti TYPE zcl_srtti_intfdescr EXPORTING RTTI = temp7.
+        CREATE OBJECT srtti TYPE zcl_srtti_intfdescr EXPORTING rtti = temp7.
       WHEN OTHERS.
         " Unsupported (new ABAP features in the future)
         RAISE EXCEPTION TYPE zcx_srtti.
