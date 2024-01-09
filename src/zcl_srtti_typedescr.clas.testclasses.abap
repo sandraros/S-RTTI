@@ -24,7 +24,7 @@ CLASS ltc_main DEFINITION
     METHODS create_by_rtti_intf FOR TESTING RAISING cx_static_check.
     METHODS assert_attribute_values
       IMPORTING
-        srtti type ref to zcl_srtti_typedescr
+        srtti         TYPE REF TO zcl_srtti_typedescr
         absolute_name LIKE cl_abap_typedescr=>absolute_name
         type_kind     LIKE cl_abap_typedescr=>type_kind
         length        LIKE cl_abap_typedescr=>length
@@ -39,45 +39,96 @@ CLASS ltc_main IMPLEMENTATION.
 
   METHOD create_by_rtti_elem.
     DATA variable TYPE c LENGTH 20.
-    DATA(srtti) = zcl_srtti_typedescr=>create_by_data_object( variable ).
-    cl_abap_unit_assert=>assert_true( msg = 'is instance of zcl_srtti_elemdescr' act = xsdbool( srtti IS INSTANCE OF zcl_srtti_elemdescr ) ).
+    DATA srtti   TYPE REF TO zcl_srtti_typedescr.
+    srtti = zcl_srtti_typedescr=>create_by_data_object( variable ).
+
+    DATA test TYPE REF TO zcl_srtti_elemdescr.
+    TRY.
+        test ?= srtti.
+      CATCH cx_sy_move_cast_error.
+        cl_abap_unit_assert=>fail( 'is instance of zcl_srtti_elemdescr' ).
+    ENDTRY.
+*    cl_abap_unit_assert=>assert_true( msg = 'is instance of zcl_srtti_elemdescr' act = xsdbool( srtti IS INSTANCE OF zcl_srtti_elemdescr ) ).
   ENDMETHOD.
 
   METHOD create_by_rtti_struct.
     DATA: BEGIN OF variable,
             comp1 TYPE c LENGTH 20,
           END OF variable.
-    DATA(srtti) = zcl_srtti_typedescr=>create_by_data_object( variable ).
-    cl_abap_unit_assert=>assert_true( msg = 'is instance of zcl_srtti_structdescr' act = xsdbool( srtti IS INSTANCE OF zcl_srtti_structdescr ) ).
+    DATA srtti   TYPE REF TO zcl_srtti_typedescr.
+    srtti = zcl_srtti_typedescr=>create_by_data_object( variable ).
+
+    DATA test TYPE REF TO zcl_srtti_structdescr.
+    TRY.
+        test ?= srtti.
+      CATCH cx_sy_move_cast_error.
+        cl_abap_unit_assert=>fail( 'is instance of zcl_srtti_structdescr' ).
+    ENDTRY.
+*    cl_abap_unit_assert=>assert_true( msg = 'is instance of zcl_srtti_structdescr' act = xsdbool( srtti IS INSTANCE OF zcl_srtti_structdescr ) ).
   ENDMETHOD.
 
   METHOD create_by_rtti_table.
     DATA: BEGIN OF variable,
             comp1 TYPE c LENGTH 20,
           END OF variable.
-    DATA(srtti) = zcl_srtti_typedescr=>create_by_data_object( variable ).
-    cl_abap_unit_assert=>assert_true( msg = 'is instance of zcl_srtti_structdescr' act = xsdbool( srtti IS INSTANCE OF zcl_srtti_structdescr ) ).
+    DATA srtti   TYPE REF TO zcl_srtti_typedescr.
+    srtti = zcl_srtti_typedescr=>create_by_data_object( variable ).
+
+    DATA test TYPE REF TO zcl_srtti_structdescr.
+    TRY.
+        test ?= srtti.
+      CATCH cx_sy_move_cast_error.
+        cl_abap_unit_assert=>fail( 'is instance of zcl_srtti_structdescr' ).
+    ENDTRY.
+*    cl_abap_unit_assert=>assert_true( msg = 'is instance of zcl_srtti_structdescr' act = xsdbool( srtti IS INSTANCE OF zcl_srtti_structdescr ) ).
   ENDMETHOD.
 
   METHOD create_by_rtti_ref.
     DATA variable TYPE REF TO flag.
-    DATA(srtti) = zcl_srtti_typedescr=>create_by_data_object( variable ).
-    cl_abap_unit_assert=>assert_true( msg = 'is instance of zcl_srtti_refdescr' act = xsdbool( srtti IS INSTANCE OF zcl_srtti_refdescr ) ).
+    DATA srtti   TYPE REF TO zcl_srtti_typedescr.
+    srtti = zcl_srtti_typedescr=>create_by_data_object( variable ).
+
+    DATA test TYPE REF TO zcl_srtti_refdescr.
+    TRY.
+        test ?= srtti.
+      CATCH cx_sy_move_cast_error.
+        cl_abap_unit_assert=>fail( 'is instance of zcl_srtti_refdescr' ).
+    ENDTRY.
+*    cl_abap_unit_assert=>assert_true( msg = 'is instance of zcl_srtti_refdescr' act = xsdbool( srtti IS INSTANCE OF zcl_srtti_refdescr ) ).
   ENDMETHOD.
 
   METHOD create_by_rtti_class.
     DATA variable TYPE REF TO lcl_any.
-    variable = NEW #( ).
-    DATA(srtti) = zcl_srtti_typedescr=>create_by_rtti( CAST #( cl_abap_typedescr=>describe_by_object_ref( variable ) ) ).
-    cl_abap_unit_assert=>assert_true( msg = 'is instance of zcl_srtti_classdescr' act = xsdbool( srtti IS INSTANCE OF zcl_srtti_classdescr ) ).
+    CREATE OBJECT variable.
+    DATA srtti   TYPE REF TO zcl_srtti_typedescr.
+    srtti = zcl_srtti_typedescr=>create_by_rtti( CAST #( cl_abap_typedescr=>describe_by_object_ref( variable ) ) ).
+
+    DATA test TYPE REF TO zcl_srtti_classdescr.
+    TRY.
+        test ?= srtti.
+      CATCH cx_sy_move_cast_error.
+        cl_abap_unit_assert=>fail( 'is instance of zcl_srtti_classdescr' ).
+    ENDTRY.
+*    cl_abap_unit_assert=>assert_true( msg = 'is instance of zcl_srtti_classdescr' act = xsdbool( srtti IS INSTANCE OF zcl_srtti_classdescr ) ).
   ENDMETHOD.
 
   METHOD create_by_rtti_intf.
     DATA variable TYPE REF TO lcl_any.
     variable = NEW #( ).
-    DATA(rtti_intf) = CAST cl_abap_classdescr( cl_abap_typedescr=>describe_by_object_ref( variable ) )->get_interface_type( 'LIF_ANY' ).
-    DATA(srtti) = zcl_srtti_typedescr=>create_by_rtti( rtti_intf ).
-    cl_abap_unit_assert=>assert_true( msg = 'is instance of zcl_srtti_intfdescr' act = xsdbool( srtti IS INSTANCE OF zcl_srtti_intfdescr ) ).
+    DATA rtti_classdescr TYPE REF TO cl_abap_classdescr.
+    DATA rtti_intf TYPE REF TO cl_abap_intfdescr.
+    rtti_classdescr ?= cl_abap_typedescr=>describe_by_object_ref( variable ).
+    rtti_intf = rtti_classdescr->get_interface_type( 'LIF_ANY' ).
+    DATA srtti   TYPE REF TO zcl_srtti_typedescr.
+    srtti = zcl_srtti_typedescr=>create_by_rtti( rtti_intf ).
+
+    DATA test TYPE REF TO zcl_srtti_intfdescr.
+    TRY.
+        test ?= srtti.
+      CATCH cx_sy_move_cast_error.
+        cl_abap_unit_assert=>fail( 'is instance of zcl_srtti_intfdescr' ).
+    ENDTRY.
+*    cl_abap_unit_assert=>assert_true( msg = 'is instance of zcl_srtti_intfdescr' act = xsdbool( srtti IS INSTANCE OF zcl_srtti_intfdescr ) ).
   ENDMETHOD.
 
   METHOD assert_attribute_values.
@@ -91,8 +142,12 @@ CLASS ltc_main IMPLEMENTATION.
 
   METHOD serialize_deserialize.
     CREATE DATA dref TYPE c LENGTH 10.
-    DATA(rtti) = cl_abap_typedescr=>describe_by_data_ref( dref ).
-    DATA(srtti) = NEW zcl_srtti_typedescr( cl_abap_typedescr=>describe_by_data_ref( dref ) ).
+    DATA srtti   TYPE REF TO zcl_srtti_typedescr.
+    DATA rtti TYPE REF TO cl_abap_typedescr.
+    rtti = cl_abap_typedescr=>describe_by_data_ref( dref ).
+    CREATE OBJECT srtti
+      EXPORTING
+        rtti = rtti.
 * absolute_name
 * type_kind
 * length
@@ -114,7 +169,8 @@ CLASS ltc_main IMPLEMENTATION.
   METHOD technical_type.
 
     DATA dobj_with_bound_data_type TYPE c LENGTH 20.
-    DATA(srtti) = zcl_srtti_typedescr=>create_by_data_object( dobj_with_bound_data_type ).
+    DATA srtti TYPE REF TO  zcl_srtti_typedescr.
+    srtti = zcl_srtti_typedescr=>create_by_data_object( dobj_with_bound_data_type ).
     cl_abap_unit_assert=>assert_equals( msg = 'technical_type' exp = abap_true act = srtti->technical_type ).
 
   ENDMETHOD.
