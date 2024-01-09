@@ -99,9 +99,11 @@ CLASS ltc_main IMPLEMENTATION.
 
   METHOD create_by_rtti_class.
     DATA variable TYPE REF TO lcl_any.
+    data typedescr  type ref to cl_abap_typedescr.
     CREATE OBJECT variable.
     DATA srtti   TYPE REF TO zcl_srtti_typedescr.
-    srtti = zcl_srtti_typedescr=>create_by_rtti( CAST #( cl_abap_typedescr=>describe_by_object_ref( variable ) ) ).
+    typedescr ?= cl_abap_typedescr=>describe_by_object_ref( variable ).
+    srtti = zcl_srtti_typedescr=>create_by_rtti( typedescr ).
 
     DATA test TYPE REF TO zcl_srtti_classdescr.
     TRY.

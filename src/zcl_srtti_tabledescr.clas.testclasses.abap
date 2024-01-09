@@ -35,7 +35,8 @@ CLASS ltc_main IMPLEMENTATION.
     DATA rtti TYPE REF TO cl_abap_tabledescr.
     rtti = cl_abap_tabledescr=>create( p_line_type = strucdescr ).
     CREATE DATA dref TYPE HANDLE rtti.
-    ASSIGN dref->* TO FIELD-SYMBOL(<original>).
+    FIELD-SYMBOLS <original> type any.
+    ASSIGN dref->* TO <original>.
 
     DATA srtti TYPE REF TO  zcl_srtti_typedescr.
     DATA srtti2 TYPE REF TO  zcl_srtti_typedescr.
