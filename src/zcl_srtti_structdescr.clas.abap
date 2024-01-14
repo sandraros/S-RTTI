@@ -1,35 +1,40 @@
 "! <p class="shorttext synchronized" lang="en">Serializable RTTI structure</p>
-CLASS zcl_srtti_structdescr DEFINITION
-  PUBLIC
-  INHERITING FROM zcl_srtti_complexdescr
-  CREATE PUBLIC.
+class ZCL_SRTTI_STRUCTDESCR definition
+  public
+  inheriting from ZCL_SRTTI_COMPLEXDESCR
+  create public .
 
-  PUBLIC SECTION.
+public section.
 
-    TYPES:
-      BEGIN OF sabap_componentdescr,
+  types:
+    BEGIN OF sabap_componentdescr,
         name       TYPE string,
         type       TYPE REF TO zcl_srtti_datadescr,
         as_include TYPE abap_bool,
         suffix     TYPE string,
-      END OF sabap_componentdescr.
-    TYPES sabap_component_tab TYPE STANDARD TABLE OF sabap_componentdescr WITH DEFAULT KEY.
+      END OF sabap_componentdescr .
+  types:
+    sabap_component_tab TYPE STANDARD TABLE OF sabap_componentdescr WITH DEFAULT KEY .
 
-    DATA struct_kind LIKE cl_abap_structdescr=>struct_kind READ-ONLY.
-    DATA components  TYPE sabap_component_tab              READ-ONLY.
-    DATA has_include LIKE cl_abap_structdescr=>has_include READ-ONLY.
+  data STRUCT_KIND like CL_ABAP_STRUCTDESCR=>STRUCT_KIND read-only .
+  data COMPONENTS type SABAP_COMPONENT_TAB read-only .
+  data HAS_INCLUDE like CL_ABAP_STRUCTDESCR=>HAS_INCLUDE read-only .
 
-    METHODS constructor
-      IMPORTING
-        !rtti TYPE REF TO cl_abap_structdescr.
-    METHODS get_rtti
-        REDEFINITION.
+  methods CONSTRUCTOR
+    importing
+      !RTTI type ref to CL_ABAP_STRUCTDESCR .
+
+  methods GET_RTTI
+    redefinition .
   PROTECTED SECTION.
   PRIVATE SECTION.
 ENDCLASS.
 
 
-CLASS zcl_srtti_structdescr IMPLEMENTATION.
+
+CLASS ZCL_SRTTI_STRUCTDESCR IMPLEMENTATION.
+
+
   METHOD constructor.
     DATA components_rtti TYPE abap_component_tab.
     DATA scomponent      TYPE sabap_componentdescr.
@@ -60,6 +65,7 @@ CLASS zcl_srtti_structdescr IMPLEMENTATION.
       ENDIF.
     ENDLOOP.
   ENDMETHOD.
+
 
   METHOD get_rtti.
     DATA components_rtti TYPE cl_abap_structdescr=>component_table.

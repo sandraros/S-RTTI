@@ -51,10 +51,8 @@ CLASS ltc_main IMPLEMENTATION.
     CREATE OBJECT lo_subclass
       EXPORTING rtti = rtti.
 
-    CALL METHOD lo_subclass->get_rtti_by_type_kind_2
-        EXPORTING i_type_kind = rtti->type_kind
-        RECEIVING RTTI = rtti2.
-*    rtti2 = lo_subclass->get_rtti_by_type_kind_2( rtti->type_kind ).
+    rtti2 = lo_subclass->get_rtti_by_type_kind_2( i_type_kind = rtti->type_kind ).
+
     cl_abap_unit_assert=>assert_equals( msg = 'decimals'
                                         exp = rtti->decimals
                                         act = rtti2->decimals ).

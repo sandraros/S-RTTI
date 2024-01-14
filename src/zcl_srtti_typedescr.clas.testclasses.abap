@@ -50,7 +50,7 @@ CLASS ltc_serialize_deserialize DEFINITION
             BEGIN OF structure,
               comp1 TYPE i,
             END OF structure,
-            table        TYPE TABLE OF i,
+            table        TYPE STANDARD TABLE OF i WITH DEFAULT KEY,
             dref         TYPE REF TO ty_char_10,
           END OF variables.
     DATA rtti_before TYPE REF TO cl_abap_typedescr.
@@ -66,7 +66,7 @@ CLASS ltc_main IMPLEMENTATION.
     DATA srtti     TYPE REF TO zcl_srtti_typedescr.
     DATA test      TYPE REF TO zcl_srtti_classdescr.
 
-    variable = NEW #( ).
+    CREATE OBJECT variable TYPE lcl_any.
     typedescr ?= cl_abap_typedescr=>describe_by_object_ref( variable ).
     srtti = zcl_srtti_typedescr=>create_by_rtti( typedescr ).
 
@@ -98,7 +98,7 @@ CLASS ltc_main IMPLEMENTATION.
     DATA srtti           TYPE REF TO zcl_srtti_typedescr.
     DATA test            TYPE REF TO zcl_srtti_intfdescr.
 
-    variable = NEW #( ).
+    CREATE OBJECT variable TYPE lcl_any.
     rtti_classdescr ?= cl_abap_typedescr=>describe_by_object_ref( variable ).
     rtti_intf = rtti_classdescr->get_interface_type( 'LIF_ANY' ).
     srtti = zcl_srtti_typedescr=>create_by_rtti( rtti_intf ).
@@ -113,9 +113,10 @@ CLASS ltc_main IMPLEMENTATION.
   METHOD create_by_rtti_struct.
     DATA srtti TYPE REF TO zcl_srtti_typedescr.
     DATA test  TYPE REF TO zcl_srtti_structdescr.
-    DATA: BEGIN OF variable,
-            comp1 TYPE c LENGTH 20,
-          END OF variable.
+    DATA:
+      BEGIN OF variable,
+        comp1 TYPE c LENGTH 20,
+      END OF variable.
 
     srtti = zcl_srtti_typedescr=>create_by_data_object( variable ).
 

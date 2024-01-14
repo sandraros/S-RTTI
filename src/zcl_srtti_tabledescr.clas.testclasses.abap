@@ -37,29 +37,41 @@ CLASS ltc_main IMPLEMENTATION.
   METHOD bound_line_type.
     DATA line_with_components        TYPE ty_line_with_components.
     DATA std_table_comps_default_key TYPE ty_std_table_comps_default_key.
+    DATA component                   TYPE abap_componentdescr.
+    DATA components                  TYPE abap_component_tab.
     DATA rtti                        TYPE REF TO cl_abap_tabledescr.
     DATA dref                        TYPE REF TO data.
     DATA srtti                       TYPE REF TO zcl_srtti_typedescr.
 
-    FIELD-SYMBOLS <original> TYPE any.
+    FIELD-SYMBOLS <original_table>       TYPE ANY TABLE.
+    FIELD-SYMBOLS <original_line>        TYPE any.
+    FIELD-SYMBOLS <line_with_components> TYPE ty_line_with_components.
 
     line_with_components-very__very_long_component_name = 25.
     INSERT line_with_components INTO TABLE std_table_comps_default_key.
     line_with_components-very__very_long_component_name = 37.
     INSERT line_with_components INTO TABLE std_table_comps_default_key.
 
-    rtti = cl_abap_tabledescr=>create(
-               p_line_type = cl_abap_structdescr=>create(
-                   p_components = VALUE abap_component_tab(
-                       ( name = 'VERY__VERY_LONG_COMPONENT_NAME' type = cl_abap_elemdescr=>get_i( ) ) ) ) ).
-    CREATE DATA dref TYPE HANDLE rtti.
-    ASSIGN dref->* TO <original>.
-    MOVE-CORRESPONDING std_table_comps_default_key TO <original>.
+    component-name = 'VERY__VERY_LONG_COMPONENT_NAME'.
+    component-type = cl_abap_elemdescr=>get_i( ).
+    INSERT component INTO TABLE components.
 
-    srtti = zcl_srtti_typedescr=>create_by_data_object( <original> ).
+    rtti = cl_abap_tabledescr=>create( p_line_type = cl_abap_structdescr=>create( p_components = components ) ).
+
+    CREATE DATA dref TYPE HANDLE rtti.
+    ASSIGN dref->* TO <original_table>.
+    CREATE DATA dref LIKE LINE OF <original_table>.
+    ASSIGN dref->* TO <original_line>.
+
+    LOOP AT std_table_comps_default_key ASSIGNING <line_with_components>.
+      MOVE-CORRESPONDING <line_with_components> TO <original_line>.
+      INSERT <original_line> INTO TABLE <original_table>.
+    ENDLOOP.
+
+    srtti = zcl_srtti_typedescr=>create_by_data_object( <original_table> ).
 
     assert_copy_equals_original( srtti    = srtti
-                                 original = <original> ).
+                                 original = <original_table> ).
   ENDMETHOD.
 
   METHOD check_instantiated_classes.

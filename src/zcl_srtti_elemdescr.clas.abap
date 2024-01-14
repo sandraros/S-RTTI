@@ -2,20 +2,20 @@
 CLASS zcl_srtti_elemdescr DEFINITION
   PUBLIC
   INHERITING FROM zcl_srtti_datadescr
-  CREATE PUBLIC .
+  CREATE PUBLIC.
 
   PUBLIC SECTION.
 
-    DATA edit_mask LIKE cl_abap_elemdescr=>edit_mask .
-    DATA help_id LIKE cl_abap_elemdescr=>help_id .
-    DATA output_length LIKE cl_abap_elemdescr=>output_length .
+    DATA edit_mask     LIKE cl_abap_elemdescr=>edit_mask.
+    DATA help_id       LIKE cl_abap_elemdescr=>help_id.
+    DATA output_length LIKE cl_abap_elemdescr=>output_length.
 
     METHODS constructor
       IMPORTING
-        !rtti TYPE REF TO cl_abap_elemdescr .
+        !rtti TYPE REF TO cl_abap_elemdescr.
 
     METHODS get_rtti
-        REDEFINITION .
+      REDEFINITION.
   PROTECTED SECTION.
     METHODS get_rtti_by_type_kind
       IMPORTING
@@ -26,30 +26,23 @@ CLASS zcl_srtti_elemdescr DEFINITION
 ENDCLASS.
 
 
-
 CLASS zcl_srtti_elemdescr IMPLEMENTATION.
-
-
   METHOD constructor.
-
     super->constructor( rtti ).
 
-    edit_mask      = rtti->edit_mask.
-    help_id        = rtti->help_id.
-    output_length  = rtti->output_length.
-
+    edit_mask     = rtti->edit_mask.
+    help_id       = rtti->help_id.
+    output_length = rtti->output_length.
   ENDMETHOD.
 
-
   METHOD get_rtti.
-
     rtti = super->get_rtti( ).
     IF rtti IS BOUND.
       RETURN.
     ENDIF.
 
-    IF is_ddic_type = abap_true
-          AND technical_type = abap_false.
+    IF     is_ddic_type   = abap_true
+       AND technical_type = abap_false.
       " If XML transformations are used, they may be based on
       " the data element, for instance XSDBOOLEAN will convert "true"
       " into "X" during deserialization.
@@ -57,11 +50,9 @@ CLASS zcl_srtti_elemdescr IMPLEMENTATION.
     ELSE.
       rtti = get_rtti_by_type_kind( type_kind ).
     ENDIF.
-
   ENDMETHOD.
 
   METHOD get_rtti_by_type_kind.
-
     DATA l_length TYPE i.
 
     CASE i_type_kind.
@@ -86,7 +77,8 @@ CLASS zcl_srtti_elemdescr IMPLEMENTATION.
       WHEN cl_abap_typedescr=>typekind_hex.
         rtti = cl_abap_elemdescr=>get_x( length ).
       WHEN cl_abap_typedescr=>typekind_packed.
-        rtti = cl_abap_elemdescr=>get_p( p_length = length p_decimals = decimals ).
+        rtti = cl_abap_elemdescr=>get_p( p_length   = length
+                                         p_decimals = decimals ).
       WHEN cl_abap_typedescr=>typekind_int1.
         rtti = cl_abap_elemdescr=>get_int1( ).
       WHEN cl_abap_typedescr=>typekind_int2.
@@ -100,7 +92,5 @@ CLASS zcl_srtti_elemdescr IMPLEMENTATION.
       WHEN OTHERS.
         RAISE EXCEPTION TYPE zcx_srtti.
     ENDCASE.
-
   ENDMETHOD.
-
 ENDCLASS.
