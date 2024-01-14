@@ -23,7 +23,6 @@ CLASS ltc_main DEFINITION
   PRIVATE SECTION.
     METHODS serialize_deserialize FOR TESTING.
     METHODS get_rtti_by_type_kind FOR TESTING.
-    METHODS get_rtti_by_type_kind_enum FOR TESTING.
     METHODS get_rtti_by_type_kind_assert
       IMPORTING
         variable TYPE simple.
@@ -40,8 +39,16 @@ CLASS ltc_main IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD get_rtti_by_type_kind_assert.
-    DATA(rtti) = CAST cl_abap_elemdescr( cl_abap_typedescr=>describe_by_data( variable ) ).
-    DATA(rtti2) = NEW ltc_subclass( rtti )->get_rtti_by_type_kind_2( rtti->type_kind ).
+    DATA rtti TYPE REF TO cl_abap_elemdescr.
+    rtti ?= cl_abap_typedescr=>describe_by_data( variable ).
+
+    DATA lo_subclass TYPE REF TO ltc_subclass.
+    CREATE OBJECT lo_subclass
+      EXPORTING
+        rtti = rtti.
+
+    DATA rtti2 TYPE REF TO cl_abap_typedescr.
+    rtti2 = lo_subclass->get_rtti_by_type_kind_2( rtti->type_kind ).
     cl_abap_unit_assert=>assert_equals( msg = 'decimals'  exp = rtti->decimals  act = rtti2->decimals ).
     cl_abap_unit_assert=>assert_equals( msg = 'type_kind' exp = rtti->type_kind act = rtti2->type_kind ).
     cl_abap_unit_assert=>assert_equals( msg = 'length'    exp = rtti->length    act = rtti2->length ).
@@ -82,27 +89,5 @@ CLASS ltc_main IMPLEMENTATION.
 
   ENDMETHOD.
 
-  METHOD get_rtti_by_type_kind_enum.
-
-    " NB: possible short dump SYSTEM_CORE_DUMPED at activation (hold of 2 or 3 minutes)
-    "     because of enumeration in test class (occurred with kernel 753 SP16).
-    "     Solution: maybe note 2526439 (install kernel 753 SP19) -> solved with kernel 753 SP500
-    TYPES:
-      basetype TYPE c LENGTH 2,
-      BEGIN OF ENUM enum_size BASE TYPE basetype,
-        size_i  VALUE IS INITIAL,
-        size_l  VALUE `L`,
-        size_xl VALUE `XL`,
-      END OF ENUM enum_size.
-
-    DATA(rtti) = CAST cl_abap_enumdescr( cl_abap_typedescr=>describe_by_name( 'ENUM_SIZE' ) ).
-
-    TRY.
-        NEW ltc_subclass( rtti )->get_rtti_by_type_kind_2( rtti->type_kind ).
-      CATCH cx_root INTO DATA(lx).
-    ENDTRY.
-    cl_abap_unit_assert=>assert_bound( lx ).
-
-  ENDMETHOD.
 
 ENDCLASS.

@@ -1,4 +1,4 @@
-# S-RTTI
+# S-RTTI-Downport
 S-RTTI is a set of Serializable classes which wrap the classes of Run Time Type Services (RTTS).
 
 Objective: if your program has to write the values of variables created at run time via RTTS ([`CREATE DATA <data reference> TYPE HANDLE <type description object>`](https://help.sap.com/doc/abapdocu_latest_index_htm/latest/en-US/index.htm?file=abapcreate_data_handle.htm)) into a persistent storage or into a XSTRING (and read them), you may also probably want to write and read the types of these variables so that you can restore the variables exactly as they were when you saved the values.

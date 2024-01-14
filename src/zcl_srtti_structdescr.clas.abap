@@ -35,18 +35,31 @@ CLASS zcl_srtti_structdescr IMPLEMENTATION.
 
 
   METHOD constructor.
+    DATA temp1 TYPE abap_component_tab.
+    FIELD-SYMBOLS <component> LIKE LINE OF temp1.
+      DATA temp2 TYPE sabap_componentdescr.
+      DATA temp3 TYPE REF TO zcl_srtti_datadescr.
+      DATA scomponent LIKE temp2.
 
     super->constructor( rtti ).
 
     struct_kind = rtti->struct_kind.
     has_include = rtti->has_include.
 
-    LOOP AT rtti->get_components( ) ASSIGNING FIELD-SYMBOL(<component>).
-      DATA(scomponent) = VALUE sabap_componentdescr(
-          name       = <component>-name
-          type       = CAST #( zcl_srtti_datadescr=>create_by_rtti( <component>-type ) )
-          as_include = <component>-as_include
-          suffix     = <component>-suffix ).
+
+    temp1 = rtti->get_components( ).
+
+    LOOP AT temp1 ASSIGNING <component>.
+
+      CLEAR temp2.
+      temp2-name = <component>-name.
+
+      temp3 ?= zcl_srtti_datadescr=>create_by_rtti( <component>-type ).
+      temp2-type = temp3.
+      temp2-as_include = <component>-as_include.
+      temp2-suffix = <component>-suffix.
+
+      scomponent = temp2.
       APPEND scomponent TO components.
       IF scomponent-type->not_serializable = abap_true.
         not_serializable = abap_true.
@@ -58,13 +71,27 @@ CLASS zcl_srtti_structdescr IMPLEMENTATION.
 
   METHOD get_rtti.
 
-    DATA(lt_component) = VALUE cl_abap_structdescr=>component_table( ).
-    LOOP AT components ASSIGNING FIELD-SYMBOL(<component>).
-      DATA(ls_component) = VALUE abap_componentdescr(
-      name       = <component>-name
-      type       = CAST #( <component>-type->get_rtti( ) )
-      as_include = <component>-as_include
-      suffix     = <component>-suffix ).
+    DATA temp3 TYPE cl_abap_structdescr=>component_table.
+    DATA lt_component LIKE temp3.
+    FIELD-SYMBOLS <component> LIKE LINE OF components.
+      DATA temp4 TYPE abap_componentdescr.
+      DATA temp5 TYPE REF TO cl_abap_datadescr.
+      DATA ls_component LIKE temp4.
+    CLEAR temp3.
+
+    lt_component = temp3.
+
+    LOOP AT components ASSIGNING <component>.
+
+      CLEAR temp4.
+      temp4-name = <component>-name.
+
+      temp5 ?= <component>-type->get_rtti( ).
+      temp4-type = temp5.
+      temp4-as_include = <component>-as_include.
+      temp4-suffix = <component>-suffix.
+
+      ls_component = temp4.
       APPEND ls_component TO lt_component.
     ENDLOOP.
     rtti = cl_abap_structdescr=>create( lt_component ).
