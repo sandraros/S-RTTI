@@ -15,22 +15,36 @@ CLASS zcl_srtti_tabledescr DEFINITION
 
     METHODS constructor
       IMPORTING
-        !rtti        TYPE REF TO cl_abap_tabledescr.
+        !rtti TYPE REF TO cl_abap_tabledescr.
+
     METHODS get_rtti
-        REDEFINITION.
+      REDEFINITION.
   PROTECTED SECTION.
   PRIVATE SECTION.
 ENDCLASS.
 
 
 CLASS zcl_srtti_tabledescr IMPLEMENTATION.
+  METHOD constructor.
+    super->constructor( rtti ).
+    key            = rtti->key.
+    initial_size   = rtti->initial_size.
+    key_defkind    = rtti->key_defkind.
+    has_unique_key = rtti->has_unique_key.
+    table_kind     = rtti->table_kind.
+
+    line_type ?= zcl_srtti_typedescr=>create_by_rtti( rtti->get_table_line_type( ) ).
+    IF line_type->not_serializable = abap_true.
+      not_serializable = abap_true.
+    ENDIF.
+  ENDMETHOD.
+
   METHOD get_rtti.
     DATA lt_empty_key TYPE abap_keydescr_tab.
     DATA lo_data_rtti TYPE REF TO cl_abap_datadescr.
     DATA lo_error     TYPE REF TO cx_sy_table_creation.
 
-    FIELD-SYMBOLS:
-      <lt_key> TYPE abap_keydescr_tab.
+    FIELD-SYMBOLS <lt_key> TYPE abap_keydescr_tab.
 
     CLEAR lt_empty_key.
     CASE key_defkind.
@@ -52,19 +66,5 @@ CLASS zcl_srtti_tabledescr IMPLEMENTATION.
         RAISE EXCEPTION TYPE zcx_srtti
           EXPORTING previous = lo_error.
     ENDTRY.
-  ENDMETHOD.
-
-  METHOD constructor.
-    super->constructor( rtti ).
-    key            = rtti->key.
-    initial_size   = rtti->initial_size.
-    key_defkind    = rtti->key_defkind.
-    has_unique_key = rtti->has_unique_key.
-    table_kind     = rtti->table_kind.
-
-    line_type ?= zcl_srtti_typedescr=>create_by_rtti( rtti->get_table_line_type( ) ).
-    IF line_type->not_serializable = abap_true.
-      not_serializable = abap_true.
-    ENDIF.
   ENDMETHOD.
 ENDCLASS.

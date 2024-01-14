@@ -13,8 +13,7 @@ CLASS zcl_srtti_structdescr DEFINITION
         as_include TYPE abap_bool,
         suffix     TYPE string,
       END OF sabap_componentdescr.
-    TYPES:
-      sabap_component_tab TYPE STANDARD TABLE OF sabap_componentdescr.
+    TYPES sabap_component_tab TYPE STANDARD TABLE OF sabap_componentdescr WITH DEFAULT KEY.
 
     DATA struct_kind LIKE cl_abap_structdescr=>struct_kind READ-ONLY.
     DATA components  TYPE sabap_component_tab              READ-ONLY.

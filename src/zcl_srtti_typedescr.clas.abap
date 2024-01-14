@@ -20,18 +20,18 @@ CLASS zcl_srtti_typedescr DEFINITION
 
     METHODS constructor
       IMPORTING
-        rtti TYPE REF TO cl_abap_typedescr.
+        !rtti TYPE REF TO cl_abap_typedescr.
     METHODS get_rtti
       RETURNING
         VALUE(rtti) TYPE REF TO cl_abap_typedescr.
     CLASS-METHODS create_by_rtti
       IMPORTING
-        rtti         TYPE REF TO cl_abap_typedescr
+        !rtti TYPE REF TO cl_abap_typedescr
       RETURNING
         VALUE(srtti) TYPE REF TO zcl_srtti_typedescr.
     CLASS-METHODS create_by_data_object
       IMPORTING
-        data_object  TYPE any
+        !data_object TYPE any
       RETURNING
         VALUE(srtti) TYPE REF TO zcl_srtti_typedescr.
   PROTECTED SECTION.
@@ -53,6 +53,10 @@ CLASS zcl_srtti_typedescr IMPLEMENTATION.
     ENDIF.
   ENDMETHOD.
 
+  METHOD create_by_data_object.
+    srtti = create_by_rtti( cl_abap_typedescr=>describe_by_data( data_object ) ).
+  ENDMETHOD.
+
   METHOD create_by_rtti.
     DATA elem_rtti   TYPE REF TO cl_abap_elemdescr.
     DATA struct_rtti TYPE REF TO cl_abap_structdescr.
@@ -63,42 +67,50 @@ CLASS zcl_srtti_typedescr IMPLEMENTATION.
 
     CASE rtti->kind.
       WHEN cl_abap_typedescr=>kind_elem.
+
         elem_rtti ?= rtti.
-        srtti = NEW zcl_srtti_elemdescr( rtti = elem_rtti ).
+        CREATE OBJECT srtti TYPE zcl_srtti_elemdescr
+          EXPORTING rtti = elem_rtti.
 
       WHEN cl_abap_typedescr=>kind_struct.
 
         struct_rtti ?= rtti.
-        srtti = NEW zcl_srtti_structdescr( rtti = struct_rtti ).
+        CREATE OBJECT srtti TYPE zcl_srtti_structdescr
+          EXPORTING rtti = struct_rtti.
+
       WHEN cl_abap_typedescr=>kind_table.
 
         table_rtti ?= rtti.
-        srtti = NEW zcl_srtti_tabledescr( rtti = table_rtti ).
+        CREATE OBJECT srtti TYPE zcl_srtti_tabledescr
+          EXPORTING rtti = table_rtti.
+
       WHEN cl_abap_typedescr=>kind_ref.
 
         ref_rtti ?= rtti.
-        srtti = NEW zcl_srtti_refdescr( rtti = ref_rtti ).
+        CREATE OBJECT srtti TYPE zcl_srtti_refdescr
+          EXPORTING rtti = ref_rtti.
+
       WHEN cl_abap_typedescr=>kind_class.
 
         class_rtti ?= rtti.
-        srtti = NEW zcl_srtti_classdescr( rtti = class_rtti ).
+        CREATE OBJECT srtti TYPE zcl_srtti_classdescr
+          EXPORTING rtti = class_rtti.
+
       WHEN cl_abap_typedescr=>kind_intf.
 
         intf_rtti ?= rtti.
-        srtti = NEW zcl_srtti_intfdescr( rtti = intf_rtti ).
+        CREATE OBJECT srtti TYPE zcl_srtti_intfdescr
+          EXPORTING rtti = intf_rtti.
+
       WHEN OTHERS.
         " Unsupported (new ABAP features in the future)
         RAISE EXCEPTION TYPE zcx_srtti.
     ENDCASE.
   ENDMETHOD.
 
-  METHOD create_by_data_object.
-    srtti = create_by_rtti( cl_abap_typedescr=>describe_by_data( data_object ) ).
-  ENDMETHOD.
-
   METHOD get_rtti.
     " default behavior
-    IF technical_type = abap_false."absolute_name NP '\TYPE=%_T*'.
+    IF technical_type = abap_false.
       rtti = cl_abap_typedescr=>describe_by_name( absolute_name ).
     ENDIF.
   ENDMETHOD.

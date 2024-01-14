@@ -1,27 +1,29 @@
 "! <p class="shorttext synchronized" lang="en">Serializable RTTI object type</p>
-CLASS zcl_srtti_objectdescr DEFINITION
-  PUBLIC
-  INHERITING FROM zcl_srtti_typedescr
-  CREATE PUBLIC.
+class ZCL_SRTTI_OBJECTDESCR definition
+  public
+  inheriting from ZCL_SRTTI_TYPEDESCR
+  create public .
 
-  PUBLIC SECTION.
+public section.
 
-    DATA interfaces LIKE cl_abap_objectdescr=>interfaces.
-    DATA types      LIKE cl_abap_objectdescr=>types.
-    DATA attributes LIKE cl_abap_objectdescr=>attributes.
-    DATA methods    LIKE cl_abap_objectdescr=>methods.
-    DATA events     LIKE cl_abap_objectdescr=>events.
+  data INTERFACES like CL_ABAP_OBJECTDESCR=>INTERFACES .
+  data TYPES like CL_ABAP_OBJECTDESCR=>TYPES .
+  data ATTRIBUTES like CL_ABAP_OBJECTDESCR=>ATTRIBUTES .
+  data METHODS like CL_ABAP_OBJECTDESCR=>METHODS .
+  data EVENTS like CL_ABAP_OBJECTDESCR=>EVENTS .
 
-    METHODS constructor
-      IMPORTING
-        !rtti TYPE REF TO cl_abap_objectdescr.
-
+  methods CONSTRUCTOR
+    importing
+      !RTTI type ref to CL_ABAP_OBJECTDESCR .
   PROTECTED SECTION.
   PRIVATE SECTION.
 ENDCLASS.
 
 
-CLASS zcl_srtti_objectdescr IMPLEMENTATION.
+
+CLASS ZCL_SRTTI_OBJECTDESCR IMPLEMENTATION.
+
+
   METHOD constructor.
     super->constructor( rtti ).
 

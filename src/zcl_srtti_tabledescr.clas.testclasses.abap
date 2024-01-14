@@ -15,7 +15,7 @@ CLASS ltc_main DEFINITION
     METHODS assert_copy_equals_original
       IMPORTING
         srtti    TYPE REF TO zcl_srtti_typedescr
-        original TYPE ltc_main=>ty_std_table_comps_default_key.
+        original TYPE ty_std_table_comps_default_key.
 ENDCLASS.
 
 
@@ -37,7 +37,9 @@ CLASS ltc_main IMPLEMENTATION.
   METHOD bound_line_type.
     DATA line_with_components        TYPE ty_line_with_components.
     DATA std_table_comps_default_key TYPE ty_std_table_comps_default_key.
+    DATA rtti                        TYPE REF TO cl_abap_tabledescr.
     DATA dref                        TYPE REF TO data.
+    DATA srtti                       TYPE REF TO zcl_srtti_typedescr.
 
     FIELD-SYMBOLS <original> TYPE any.
 
@@ -46,15 +48,15 @@ CLASS ltc_main IMPLEMENTATION.
     line_with_components-very__very_long_component_name = 37.
     INSERT line_with_components INTO TABLE std_table_comps_default_key.
 
-    DATA(rtti) = cl_abap_tabledescr=>create(
-        p_line_type = cl_abap_structdescr=>create(
-                          p_components = VALUE abap_component_tab(
-                              ( name = 'VERY__VERY_LONG_COMPONENT_NAME' type = cl_abap_elemdescr=>get_i( ) ) ) ) ).
+    rtti = cl_abap_tabledescr=>create(
+               p_line_type = cl_abap_structdescr=>create(
+                   p_components = VALUE abap_component_tab(
+                       ( name = 'VERY__VERY_LONG_COMPONENT_NAME' type = cl_abap_elemdescr=>get_i( ) ) ) ) ).
     CREATE DATA dref TYPE HANDLE rtti.
     ASSIGN dref->* TO <original>.
     MOVE-CORRESPONDING std_table_comps_default_key TO <original>.
 
-    DATA(srtti) = zcl_srtti_typedescr=>create_by_data_object( <original> ).
+    srtti = zcl_srtti_typedescr=>create_by_data_object( <original> ).
 
     assert_copy_equals_original( srtti    = srtti
                                  original = <original> ).
