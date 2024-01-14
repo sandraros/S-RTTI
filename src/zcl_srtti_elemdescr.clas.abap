@@ -44,7 +44,9 @@ CLASS zcl_srtti_elemdescr IMPLEMENTATION.
   METHOD get_rtti.
 
     rtti = super->get_rtti( ).
-    CHECK rtti IS NOT BOUND.
+    IF rtti IS BOUND.
+      RETURN.
+    ENDIF.
 
     IF is_ddic_type = abap_true
           AND technical_type = abap_false.

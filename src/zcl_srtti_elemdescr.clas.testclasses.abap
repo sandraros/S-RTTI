@@ -9,11 +9,13 @@ CLASS ltc_subclass DEFINITION INHERITING FROM zcl_srtti_elemdescr.
         VALUE(rtti) TYPE REF TO cl_abap_typedescr.
 ENDCLASS.
 
+
 CLASS ltc_subclass IMPLEMENTATION.
   METHOD get_rtti_by_type_kind_2.
     rtti = get_rtti_by_type_kind( i_type_kind ).
   ENDMETHOD.
 ENDCLASS.
+
 
 CLASS ltc_main DEFINITION
       FOR TESTING
@@ -21,37 +23,43 @@ CLASS ltc_main DEFINITION
       RISK LEVEL HARMLESS.
 
   PRIVATE SECTION.
+
     METHODS serialize_deserialize FOR TESTING.
     METHODS get_rtti_by_type_kind FOR TESTING.
+
     METHODS get_rtti_by_type_kind_assert
       IMPORTING
         variable TYPE simple.
-    DATA dref TYPE REF TO data.
-
 ENDCLASS.
 
-CLASS ltc_main IMPLEMENTATION.
 
+CLASS ltc_main IMPLEMENTATION.
   METHOD serialize_deserialize.
     DATA variable TYPE c LENGTH 20.
+
     variable = 'Hello World'.
     zcl_srtti_aunit=>serialize_deserialize( variable ).
   ENDMETHOD.
 
   METHOD get_rtti_by_type_kind_assert.
-    DATA rtti TYPE REF TO cl_abap_elemdescr.
+    DATA rtti        TYPE REF TO cl_abap_elemdescr.
+    DATA lo_subclass TYPE REF TO ltc_subclass.
+    DATA rtti2       TYPE REF TO cl_abap_typedescr.
+
     rtti ?= cl_abap_typedescr=>describe_by_data( variable ).
 
-    DATA lo_subclass TYPE REF TO ltc_subclass.
-    CREATE OBJECT lo_subclass
-      EXPORTING
-        rtti = rtti.
+    lo_subclass = NEW #( rtti = rtti ).
 
-    DATA rtti2 TYPE REF TO cl_abap_typedescr.
     rtti2 = lo_subclass->get_rtti_by_type_kind_2( rtti->type_kind ).
-    cl_abap_unit_assert=>assert_equals( msg = 'decimals'  exp = rtti->decimals  act = rtti2->decimals ).
-    cl_abap_unit_assert=>assert_equals( msg = 'type_kind' exp = rtti->type_kind act = rtti2->type_kind ).
-    cl_abap_unit_assert=>assert_equals( msg = 'length'    exp = rtti->length    act = rtti2->length ).
+    cl_abap_unit_assert=>assert_equals( msg = 'decimals'
+                                        exp = rtti->decimals
+                                        act = rtti2->decimals ).
+    cl_abap_unit_assert=>assert_equals( msg = 'type_kind'
+                                        exp = rtti->type_kind
+                                        act = rtti2->type_kind ).
+    cl_abap_unit_assert=>assert_equals( msg = 'length'
+                                        exp = rtti->length
+                                        act = rtti2->length ).
   ENDMETHOD.
 
   METHOD get_rtti_by_type_kind.
@@ -86,8 +94,5 @@ CLASS ltc_main IMPLEMENTATION.
     get_rtti_by_type_kind_assert( int8       ).
     get_rtti_by_type_kind_assert( decfloat16 ).
     get_rtti_by_type_kind_assert( decfloat34 ).
-
   ENDMETHOD.
-
-
 ENDCLASS.

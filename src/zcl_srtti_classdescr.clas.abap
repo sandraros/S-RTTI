@@ -1,4 +1,3 @@
-"! <p class="shorttext synchronized" lang="en">Serializable RTTI class</p>
 CLASS zcl_srtti_classdescr DEFINITION
   PUBLIC
   INHERITING FROM zcl_srtti_objectdescr
