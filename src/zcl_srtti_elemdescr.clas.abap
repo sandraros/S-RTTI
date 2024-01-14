@@ -37,13 +37,6 @@ CLASS zcl_srtti_elemdescr IMPLEMENTATION.
     edit_mask      = rtti->edit_mask.
     help_id        = rtti->help_id.
     output_length  = rtti->output_length.
-**        ls_dfies = lo_elem->get_ddic_field( ).
-**        IF ls_dfies-fieldname IS INITIAL.
-**          CONCATENATE '\TYPE=' ls_dfies-tabname INTO lo_loc_elem->ddic_type.
-**        ELSE.
-**          CONCATENATE '\TYPE=' ls_dfies-tabname '\TYPE=' ls_dfies-fieldname INTO lo_loc_elem->ddic_type.
-**        ENDIF.
-*        ro_loc_type = lo_loc_elem.
 
   ENDMETHOD.
 
