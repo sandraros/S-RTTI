@@ -16,24 +16,40 @@ CLASS zcl_srtti_aunit IMPLEMENTATION.
 
   METHOD serialize_deserialize.
     " Serialize: both type and value at the same time.
-    ASSIGN variable TO FIELD-SYMBOL(<variable1>).
-    DATA(rtti1) = cl_abap_typedescr=>describe_by_data( <variable1> ).
-    DATA(srtti1) = zcl_srtti_typedescr=>create_by_data_object( <variable1> ).
+    FIELD-SYMBOLS <variable1> TYPE any.
+    DATA rtti1 TYPE REF TO cl_abap_typedescr.
+    DATA srtti1 TYPE REF TO zcl_srtti_typedescr.
+    DATA xstring TYPE xstring.
+    DATA srtti2 TYPE REF TO zcl_srtti_typedescr.
+    DATA temp1 TYPE REF TO cl_abap_datadescr.
+    DATA rtti2 LIKE temp1.
+    DATA ref_variable2 TYPE REF TO data.
+    FIELD-SYMBOLS <variable2> TYPE any.
+    ASSIGN variable TO <variable1>.
+
+    rtti1 = cl_abap_typedescr=>describe_by_data( <variable1> ).
+
+    srtti1 = zcl_srtti_typedescr=>create_by_data_object( <variable1> ).
+
     CALL TRANSFORMATION id
         SOURCE  srtti = srtti1
                 dobj  = <variable1>
-        RESULT XML DATA(xstring)
+        RESULT XML xstring
         OPTIONS data_refs = 'heap-or-create'.
 
     " Deserialize: (1) the type, to create the variable (2) then the value.
-    DATA srtti2 TYPE REF TO zcl_srtti_typedescr.
+
     CALL TRANSFORMATION id
         SOURCE XML xstring
         RESULT srtti = srtti2.
-    DATA(rtti2) = CAST cl_abap_datadescr( srtti2->get_rtti( ) ).
-    DATA ref_variable2 TYPE REF TO data.
+
+    temp1 ?= srtti2->get_rtti( ).
+
+    rtti2 = temp1.
+
     CREATE DATA ref_variable2 TYPE HANDLE rtti2.
-    ASSIGN ref_variable2->* TO FIELD-SYMBOL(<variable2>).
+
+    ASSIGN ref_variable2->* TO <variable2>.
     CALL TRANSFORMATION id
         SOURCE XML xstring
         RESULT dobj = <variable2>.

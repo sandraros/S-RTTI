@@ -1,25 +1,24 @@
-CLASS zcx_srtti DEFINITION
-  PUBLIC
-  INHERITING FROM cx_no_check
-  FINAL
-  CREATE PUBLIC .
+class ZCX_SRTTI definition
+  public
+  inheriting from CX_NO_CHECK
+  final
+  create public .
 
-  PUBLIC SECTION.
+public section.
 
-    INTERFACES if_t100_dyn_msg .
-    INTERFACES if_t100_message .
+  interfaces IF_T100_MESSAGE .
 
-    METHODS constructor
-      IMPORTING
-        !textid   LIKE if_t100_message=>t100key OPTIONAL
-        !previous LIKE previous OPTIONAL .
+  methods CONSTRUCTOR
+    importing
+      !TEXTID like IF_T100_MESSAGE=>T100KEY optional
+      !PREVIOUS like PREVIOUS optional .
   PROTECTED SECTION.
   PRIVATE SECTION.
 ENDCLASS.
 
 
 
-CLASS zcx_srtti IMPLEMENTATION.
+CLASS ZCX_SRTTI IMPLEMENTATION.
 
 
   METHOD constructor ##ADT_SUPPRESS_GENERATION.
