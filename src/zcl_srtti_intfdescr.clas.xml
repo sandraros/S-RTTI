@@ -11,13 +11,6 @@
     <FIXPT>X</FIXPT>
     <UNICODE>X</UNICODE>
    </VSEOCLASS>
-   <DESCRIPTIONS>
-    <SEOCOMPOTX>
-     <CMPNAME>INTF_KIND</CMPNAME>
-     <LANGU>E</LANGU>
-     <DESCRIPT>INTF_KIND</DESCRIPT>
-    </SEOCOMPOTX>
-   </DESCRIPTIONS>
   </asx:values>
  </asx:abap>
 </abapGit>
